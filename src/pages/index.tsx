@@ -1,115 +1,166 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { ChevronRight, Bot, Zap, Shield, Cpu } from 'lucide-react';
 
 export default function Home() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+    
+    const handleMouseMove = (e : any) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth - 0.5) * 20,
+        y: (e.clientY / window.innerHeight - 0.5) * 20
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+      {/* <Head>
+        <title>TaskBot</title>
+      </Head> */}
+
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden relative">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          {/* Floating Orbs */}
+          <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-20 blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-full opacity-10 blur-3xl animate-pulse delay-500"></div>
+          
+          {/* Grid Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="grid grid-cols-12 gap-8 h-full">
+              {Array.from({ length: 144 }).map((_, i) => (
+                <div 
+                  key={i} 
+                  className="border border-cyan-500/20 animate-pulse"
+                  style={{ animationDelay: `${i * 50}ms` }}
+                ></div>
+              ))}
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Main Content */}
+        <main className="relative z-10 min-h-screen flex items-center justify-center p-6">
+          <div 
+            className={`max-w-4xl mx-auto text-center transition-all duration-1000 ${
+              isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+            style={{
+              transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`
+            }}
+          >
+            {/* Logo/Icon */}
+            <div className="relative mb-8">
+              <div className="w-32 h-32 mx-auto relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl rotate-45 animate-spin-slow opacity-80"></div>
+                <div className="absolute inset-2 bg-slate-900 rounded-xl flex items-center justify-center">
+                  <Bot className="w-12 h-12 text-cyan-400 animate-pulse" />
+                </div>
+              </div>
+            </div>
+
+            {/* Title */}
+            <h1 className="text-6xl md:text-7xl font-black mb-6 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-pulse">
+              Task
+            </h1>
+            <h2 className="text-5xl md:text-6xl font-black mb-8 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">
+              Bot
+            </h2>
+
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Sistema de gerenciamento e monitoramento robótico 
+              <span className="block text-cyan-400 font-semibold mt-2">
+                CHAMA !!! 
+              </span>
+            </p>
+
+            {/* Features Grid */}
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {[
+                { icon: Zap, title: 'Ajuda na Organização', desc: 'Velocidade otimizada' },
+                { icon: Shield, title: 'Segurança Total', desc: 'Proteção avançada' },
+                { icon: Cpu, title: 'IA Integrada', desc: 'Inteligência artificial' }
+              ].map((feature, index) => (
+                <div 
+                  key={index}
+                  className={`group p-6 rounded-2xl bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20 ${
+                    isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                  }`}
+                  style={{ animationDelay: `${index * 200}ms` }}
+                >
+                  <feature.icon className="w-8 h-8 text-cyan-400 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" />
+                  <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+                  <p className="text-slate-400 text-sm">{feature.desc}</p>
+                </div>
+              ))}
+            </div> */}
+
+            {/* CTA Button */}
+            <Link href="/robots">
+              <button className="group relative overflow-hidden bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 transform">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex items-center justify-center gap-3">
+                  <Bot className="w-6 h-6 group-hover:animate-bounce" />
+                  <span>Acessar Agenda de Robôs</span>
+                  <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
+                </div>
+                
+                {/* Animated border */}
+                <div className="absolute inset-0 rounded-2xl opacity-75">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-pulse"></div>
+                </div>
+              </button>
+            </Link>
+
+            {/* Status Indicator */}
+            {/* <div className="mt-12 flex items-center justify-center gap-2 text-emerald-400">
+              <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Sistema Online</span>
+            </div> */}
+          </div>
+        </main>
+
+        {/* Floating Action Elements */}
+        <div className="absolute bottom-8 left-8">
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div 
+                key={i}
+                className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"
+                style={{ animationDelay: `${i * 300}ms` }}
+              ></div>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute bottom-8 right-8">
+          <div className="text-right text-slate-500 text-xs">
+            <div>Desenvolvido por</div>
+            <div>Vitor Bansen</div>
+          </div>
+        </div>
+
+        <style jsx>{`
+          @keyframes spin-slow {
+            from { transform: rotate(45deg); }
+            to { transform: rotate(405deg); }
+          }
+          
+          .animate-spin-slow {
+            animation: spin-slow 8s linear infinite;
+          }
+        `}</style>
+      </div>
+    </>
   );
 }
