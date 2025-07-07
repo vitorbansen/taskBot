@@ -31,14 +31,15 @@ const RobotScheduler = () => {
   });
 
   // Cores predefinidas para os robôs
-  const colors = [
+    const colors = [
     '#3B82F6', '#EF4444', '#10B981', '#F59E0B', 
     '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16',
-    '#F97316', '#6366F1', '#14B8A6', '#F43F5E'
+    '#F97316', '#6366F1', '#14B8A6', '#F43F5E',
+    '#34D399', '#818CF8', '#FB7185', '#FACC15'
   ];
 
-  // Gerar dias do mês (1-28)
-  const days = Array.from({ length: 28 }, (_, i) => i + 1);
+  // Gerar dias do mês (1-30)
+  const days = Array.from({ length: 30 }, (_, i) => i + 1);
 
   // Gerar horários do dia (0-23h)
   const hours = Array.from({ length: 24 }, (_, i) => i);

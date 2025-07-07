@@ -30,14 +30,15 @@ const RobotScheduler = () => {
   });
 
   // Predefined colors for robots
-  const colors = [
+    const colors = [
     '#3B82F6', '#EF4444', '#10B981', '#F59E0B', 
     '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16',
-    '#F97316', '#6366F1', '#14B8A6', '#F43F5E'
+    '#F97316', '#6366F1', '#14B8A6', '#F43F5E',
+    '#34D399', '#818CF8', '#FB7185', '#FACC15'
   ];
 
-  // Generate days of the month (1-28)
-  const days = Array.from({ length: 28 }, (_, i) => i + 1);
+  // Generate days of the month (1-30)
+  const days = Array.from({ length: 30 }, (_, i) => i + 1);
 
   // Generate hours of the day (0-23)
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -237,7 +238,7 @@ const RobotScheduler = () => {
               {/* Add Robot Button */}
               <button
                 onClick={() => setShowAddRobot(true)}
-                className="group relative overflow-hidden w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105"
+                className="group relative overflow-hidden w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4 py-2 rounded-xl hover:shadow-cyan-500/50 transition-all duration-300 "
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center gap-2">
@@ -337,7 +338,7 @@ const RobotScheduler = () => {
                             .map((robot, index) => (
                               <div
                                 key={robot.id}
-                                className="absolute left-1 right-1 rounded-xl border-l-4 p-2 transition-all hover:scale-105 hover:shadow-cyan-500/20"
+                                className="absolute left-1 right-1 rounded-xl border-l-4 p-2 transition-all hover:shadow-cyan-500/20"
                                 style={{
                                   backgroundColor: robot.color + '20',
                                   borderLeftColor: robot.color,
