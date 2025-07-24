@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Clock, Calendar, Settings, Trash2, Check } from 'lucide-react';
+import { Plus, Clock, Calendar, Settings, Trash2, Check, Edit2 } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
-
 
 interface Robot {
   id: number;
@@ -15,7 +14,10 @@ interface Robot {
   manual: boolean;
   day: number;
   isDaily?: boolean;
+  description?: string;
 }
+
+const DESCRIPTION_LIMIT = 50;
 
 const RobotScheduler = () => {
   const [robots, setRobots] = useState<Robot[]>([]);
@@ -27,11 +29,16 @@ const RobotScheduler = () => {
     endTime: '',
     color: '#3B82F6',
     manual: false,
-    isDaily: false
+    isDaily: false,
+    description: ''
   });
 
+  const [showDescriptionModal, setShowDescriptionModal] = useState(false);
+  const [descriptionEditingRobot, setDescriptionEditingRobot] = useState<Robot | null>(null);
+  const [tempDescription, setTempDescription] = useState('');
+
   // Cores predefinidas para os robôs
-    const colors = [
+  const colors = [
     '#3B82F6', '#EF4444', '#10B981', '#F59E0B', 
     '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16',
     '#F97316', '#6366F1', '#14B8A6', '#F43F5E',
@@ -100,7 +107,8 @@ const RobotScheduler = () => {
           endTime: '',
           color: '#3B82F6',
           manual: false,
-          isDaily: false
+          isDaily: false,
+          description: ''
         });
         setShowAddRobot(false);
       }
@@ -136,6 +144,13 @@ const RobotScheduler = () => {
         r.id === id ? { ...r, manual: !r.manual } : r
       ));
     }
+  };
+
+  // Abrir modal descrição
+  const openDescriptionModal = (robot: Robot) => {
+    setDescriptionEditingRobot(robot);
+    setTempDescription(robot.description || '');
+    setShowDescriptionModal(true);
   };
 
   // Obter robôs do dia selecionado
@@ -178,13 +193,13 @@ const RobotScheduler = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-       <div className="fixed top-4 left-4 z-50">
-        <button
+      <div className="fixed top-4 left-4 z-50">
+        {/* <button
           onClick={() => router.push('/robots/darkmode')}
           className="flex items-center space-x-2 px-4 py-2 bg-white text-white border border-slate-600 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all"
         >
           <span className="text-xl">🌚</span>
-        </button>
+        </button> */}
       </div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -244,15 +259,15 @@ const RobotScheduler = () => {
                     <div
                       key={day}
                       onClick={() => setSelectedDay(day)}
-                      className={`
-                        p-2 text-center cursor-pointer rounded transition-all text-sm
+                      className={
+                        `p-2 text-center cursor-pointer rounded transition-all text-sm
                         ${isSelected 
                           ? 'bg-blue-600 text-white' 
                           : dayRobots.length > 0 
                             ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' 
                             : 'bg-gray-100 hover:bg-gray-200'
-                        }
-                      `}
+                        }`
+                      }
                     >
                       {day}
                       {dayRobots.length > 0 && (
@@ -350,7 +365,24 @@ const RobotScheduler = () => {
                                       {robot.manual && (
                                         <Check className="w-4 h-4 ml-1 text-green-600 flex-shrink-0" />
                                       )}
+                                      {/* Botão para editar descrição */}
+                                      <button
+                                        onClick={() => openDescriptionModal(robot)}
+                                        className="ml-2 text-blue-600 hover:text-blue-800"
+                                        title="Editar descrição"
+                                        type="button"
+                                      >
+                                        <Edit2 className="w-4 h-4" />
+                                      </button>
                                     </div>
+                                    {robot.description && (
+                                      <div
+                                        className="text-xs text-gray-500 mt-1 truncate"
+                                        title={robot.description}
+                                      >
+                                        📝 {robot.description}
+                                      </div>
+                                    )}
                                     <div className="text-xs text-gray-600 mt-1">
                                       {robot.startTime} - {robot.endTime}
                                     </div>
@@ -359,13 +391,13 @@ const RobotScheduler = () => {
                                   <div className="flex flex-col space-y-1 ml-2">
                                     <button
                                       onClick={() => toggleManual(robot.id)}
-                                      className={`
-                                        px-2 py-1 rounded text-xs font-medium transition-colors
+                                      className={
+                                        `px-2 py-1 rounded text-xs font-medium transition-colors
                                         ${robot.manual 
                                           ? 'bg-green-500 text-white' 
                                           : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                                        }
-                                      `}
+                                        }`
+                                      }
                                     >
                                       {robot.manual ? 'M' : 'A'}
                                     </button>
@@ -420,28 +452,43 @@ const RobotScheduler = () => {
                       <div
                         key={robot.id}
                         className="flex items-center justify-between p-3 rounded-lg border-l-4"
-                        style={{ borderLeftColor: robot.color, backgroundColor: robot.color + '10' }}
+                        style={{ borderColor: robot.color, backgroundColor: robot.color + '20' }}
                       >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: robot.color }}
-                          ></div>
-                          <div>
-                            <div className="font-medium">{robot.name}</div>
-                            <div className="text-sm text-gray-600 flex items-center">
-                              <Clock className="w-4 h-4 mr-1" />
-                              {robot.startTime} - {robot.endTime}
-                            </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium">{robot.name}</div>
+                          <div className="text-xs text-gray-700">
+                            {robot.startTime} - {robot.endTime}
                           </div>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          {robot.manual && (
-                            <span className="text-green-600 text-xs font-medium">
-                              Manual ✓
-                            </span>
+                          {robot.description && (
+                            <div className="text-xs text-gray-500 mt-1 truncate" title={robot.description}>
+                              📝 {robot.description}
+                            </div>
                           )}
+                        </div>
+                        <div className="flex flex-col space-y-1 ml-4">
+                          <button
+                            onClick={() => toggleManual(robot.id)}
+                            className={`px-3 py-1 rounded text-xs font-semibold transition-colors
+                              ${robot.manual
+                                ? 'bg-green-500 text-white'
+                                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                              }`}
+                          >
+                            {robot.manual ? 'M' : 'A'}
+                          </button>
+                          <button
+                            onClick={() => openDescriptionModal(robot)}
+                            className="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-xs font-semibold"
+                            type="button"
+                          >
+                            📝
+                          </button>
+                          <button
+                            onClick={() => removeRobot(robot.id)}
+                            className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-xs font-semibold"
+                          >
+                           <Trash2 className="w-3 h-3" />
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -450,131 +497,175 @@ const RobotScheduler = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Modal Adicionar Robô */}
-        {showAddRobot && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-lg font-semibold mb-4">
-                Adicionar Robô {newRobot.isDaily ? '- Todos os Dias' : `- Dia ${selectedDay}`}
-              </h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nome do Robô
-                  </label>
-                  <input
-                    type="text"
-                    value={newRobot.name}
-                    onChange={(e) => setNewRobot({...newRobot, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Ex: Robô Vendas"
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Hora Início
-                    </label>
-                    <input
-                      type="time"
-                      value={newRobot.startTime}
-                      onChange={(e) => setNewRobot({...newRobot, startTime: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Hora Fim
-                    </label>
-                    <input
-                      type="time"
-                      value={newRobot.endTime}
-                      onChange={(e) => setNewRobot({...newRobot, endTime: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Cor do Robô
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {colors.map(color => (
-                      <button
-                        key={color}
-                        onClick={() => setNewRobot({...newRobot, color})}
-                        className={`
-                          w-8 h-8 rounded border-2 transition-all
-                          ${newRobot.color === color 
-                            ? 'border-gray-800 scale-110' 
-                            : 'border-gray-300'
-                          }
-                        `}
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="manual"
-                    checked={newRobot.manual}
-                    onChange={(e) => setNewRobot({...newRobot, manual: e.target.checked})}
-                    className="mr-2"
-                  />
-                  <label htmlFor="manual" className="text-sm text-gray-700">
-                    Marcar como manual
-                  </label>
-                </div>
+      {/* Modal Adicionar Robô */}
+      {showAddRobot && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Adicionar Novo Robô</h3>
 
-                <div className="flex items-center p-3 bg-blue-50 rounded-md border border-blue-200">
-                  <input
-                    type="checkbox"
-                    id="isDaily"
-                    checked={newRobot.isDaily}
-                    onChange={(e) => setNewRobot({...newRobot, isDaily: e.target.checked})}
-                    className="mr-3"
-                  />
-                  <label htmlFor="isDaily" className="text-sm text-blue-800 font-medium">
-                    🗓️ Robô diário (aplicar a todos os 28 dias)
-                  </label>
-                </div>
-              </div>
-              
+            <input
+              type="text"
+              className="w-full p-2 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Nome do Robô"
+              value={newRobot.name}
+              onChange={e => setNewRobot({ ...newRobot, name: e.target.value })}
+            />
+
+            <label className="block mb-1 font-medium text-gray-700">Início</label>
+            <input
+              type="time"
+              className="w-full p-2 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={newRobot.startTime}
+              onChange={e => setNewRobot({ ...newRobot, startTime: e.target.value })}
+            />
+
+            <label className="block mb-1 font-medium text-gray-700">Fim</label>
+            <input
+              type="time"
+              className="w-full p-2 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={newRobot.endTime}
+              onChange={e => setNewRobot({ ...newRobot, endTime: e.target.value })}
+            />
+
+            <label className="block mb-1 font-medium text-gray-700">Cor</label>
+             <div className="flex flex-wrap gap-2 mb-3">
+              {colors.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setNewRobot({ ...newRobot, color })}
+                  className={`w-8 h-8 rounded-full border-2 focus:outline-none ${
+                    newRobot.color === color ? 'border-blue-600' : 'border-transparent'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  aria-label={`Selecionar cor ${color}`}
+                />
+              ))}
+            </div>
+
+            <label className="flex items-center mb-3">
+              <input
+                type="checkbox"
+                checked={newRobot.manual}
+                onChange={e => setNewRobot({ ...newRobot, manual: e.target.checked })}
+                className="mr-2"
+              />
+              Manual (M)
+            </label>
+
+            <label className="flex items-center mb-3">
+              <input
+                type="checkbox"
+                checked={newRobot.isDaily}
+                onChange={e => setNewRobot({ ...newRobot, isDaily: e.target.checked })}
+                className="mr-2"
+              />
+              Repetir para todos os dias
+            </label>
+
               {hasTimeConflict(selectedDay, newRobot.startTime, newRobot.endTime, null, newRobot.isDaily) && (
-                <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-md">
-                  <p className="text-sm text-red-700">
-                    ⚠️ Conflito de horário detectado {newRobot.isDaily ? 'em um ou mais dias' : 'neste dia'}.
-                  </p>
-                </div>
-              )}
-              
-              <div className="flex space-x-3 mt-6">
-                <button
-                  onClick={() => setShowAddRobot(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={addRobot}
-                  disabled={!newRobot.name || !newRobot.startTime || !newRobot.endTime}
-                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {newRobot.isDaily ? 'Adicionar a Todos os Dias' : 'Adicionar'}
-                </button>
+              <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-md">
+                <p className="text-sm text-red-700">
+                  ⚠️ Conflito de horário detectado {newRobot.isDaily ? 'em um ou mais dias' : 'neste dia'}.
+                </p>
               </div>
+            )}
+
+            <label className="block mb-1 font-medium text-gray-700">Descrição</label>
+            <textarea
+              value={newRobot.description}
+              onChange={e => {
+                if (e.target.value.length <= DESCRIPTION_LIMIT) {
+                  setNewRobot({ ...newRobot, description: e.target.value });
+                }
+              }}
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1"
+              placeholder="Descrição do robô"
+              rows={3}
+            />
+            <div className="text-right text-xs text-gray-500 mb-3">
+              {newRobot.description.length} / {DESCRIPTION_LIMIT}
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowAddRobot(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={addRobot}
+                disabled={!newRobot.name || !newRobot.startTime || !newRobot.endTime}
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Adicionar
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Modal Editar Descrição */}
+      {showDescriptionModal && descriptionEditingRobot && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">
+              Descrição do Robô - {descriptionEditingRobot.name} (Dia {descriptionEditingRobot.day})
+            </h3>
+
+            <textarea
+              className="w-full h-24 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={tempDescription}
+              onChange={(e) => {
+                if (e.target.value.length <= DESCRIPTION_LIMIT) {
+                  setTempDescription(e.target.value);
+                }
+              }}
+              placeholder="Digite a descrição/comentário do robô aqui..."
+            />
+            <div className="text-right text-xs text-gray-500 mt-1">
+              {tempDescription.length} / {DESCRIPTION_LIMIT}
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => setShowDescriptionModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={async () => {
+                  try {
+                    // Atualiza descrição no backend
+                    await axios.put('/api/robots', {
+                      id: descriptionEditingRobot.id,
+                      description: tempDescription,
+                    });
+                    // Atualiza local
+                    setRobots(robots.map(r =>
+                      r.id === descriptionEditingRobot.id
+                        ? { ...r, description: tempDescription }
+                        : r
+                    ));
+                    setShowDescriptionModal(false);
+                  } catch (error) {
+                    console.error('Erro ao atualizar descrição:', error);
+                  }
+                }}
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

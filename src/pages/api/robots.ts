@@ -9,14 +9,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.method === 'POST') {
-      const { name, startTime, endTime, color, manual, day } = req.body;
+      const { name, startTime, endTime, color, manual, day, description } = req.body;
 
-      if (!name || !startTime || !endTime || !color || typeof day !== 'number') {
-        return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+      if (!name || !startTime || !endTime || !color || typeof day !== 'number' || typeof manual !== 'boolean') {
+        return res.status(400).json({ error: 'Campos obrigatórios ausentes ou inválidos' });
       }
 
       const robot = await prisma.robot.create({
-        data: { name, startTime, endTime, color, manual, day }
+        data: {
+          name,
+          startTime,
+          endTime,
+          color,
+          manual,
+          day,
+          description: description || null
+        }
       });
 
       return res.status(201).json(robot);

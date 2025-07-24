@@ -15,4 +15,5 @@ model Robot {
   color     String
   manual    Boolean
   day       Int
+  description String?
 }

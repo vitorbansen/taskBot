@@ -551,7 +551,7 @@ const RobotScheduler = () => {
                     className="mr-3 accent-cyan-500"
                   />
                   <label htmlFor="isDaily" className="text-sm text-cyan-400 font-medium">
-                    🗓️ Robô diário (aplicar a todos os 28 dias)
+                    🗓️ Robô diário (aplicar a todos os 30 dias)
                   </label>
                 </div>
               </div>
