@@ -380,7 +380,7 @@ const RobotScheduler = () => {
                                         className="text-xs text-gray-500 mt-1 truncate"
                                         title={robot.description}
                                       >
-                                        📝 {robot.description}
+                                         {robot.description}
                                       </div>
                                     )}
                                     <div className="text-xs text-gray-600 mt-1">
@@ -461,7 +461,7 @@ const RobotScheduler = () => {
                           </div>
                           {robot.description && (
                             <div className="text-xs text-gray-500 mt-1 truncate" title={robot.description}>
-                              📝 {robot.description}
+                              {robot.description}
                             </div>
                           )}
                         </div>
@@ -481,7 +481,7 @@ const RobotScheduler = () => {
                             className="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-xs font-semibold"
                             type="button"
                           >
-                            📝
+                          <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => removeRobot(robot.id)}
