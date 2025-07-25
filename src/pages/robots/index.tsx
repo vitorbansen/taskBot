@@ -17,7 +17,7 @@ interface Robot {
   description?: string;
 }
 
-const DESCRIPTION_LIMIT = 80;
+const DESCRIPTION_LIMIT = 120;
 
 const RobotScheduler = () => {
   const [robots, setRobots] = useState<Robot[]>([]);
