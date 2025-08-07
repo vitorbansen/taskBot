@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Clock, Calendar, Trash2, Check, Edit2, Activity, BarChart3, Users } from 'lucide-react';
 import axios from 'axios';
+import Link from 'next/link';
+
 
 interface Robot {
   id: number;
@@ -37,6 +39,8 @@ const calculateWeek = (dayOfMonth: number): number => {
   if (dayOfMonth >= 22 && dayOfMonth <= 28) return 4;
   return 1;
 };
+
+
 
 const WeeklyRobotPlanner: React.FC = () => {
   const [robots, setRobots] = useState<Robot[]>([]);
@@ -266,9 +270,11 @@ const WeeklyRobotPlanner: React.FC = () => {
                 <p className="text-gray-600 mt-1 text-sm sm:text-base">
                   Organize seus robôs por semanas - Estilo Teams
                 </p>
-              </div>
+              </div> 
             </div>
-            
+           <Link href="/robots" className="flex items-center space-x-2 px-4 py-2 font-bold bg-white text-blue-700 border border-slate-600 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all">
+           <span className="text-xl">Time Line</span>
+         </Link>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               <div className="bg-blue-50 px-4 sm:px-6 py-4 rounded-xl border border-blue-100">
                 <div className="flex items-center space-x-3">

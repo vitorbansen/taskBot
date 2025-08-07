@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Clock, Calendar, Settings, Trash2, Check, Edit2 } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
+import Link from 'next/link';
 
 interface Robot {
   id: number;
@@ -188,18 +189,15 @@ const RobotScheduler = () => {
     const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
     return Math.max(durationHours * 60, 30); // mínimo 30px
   };
-
-  const router = useRouter();
+   
+  
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="fixed top-4 left-4 z-50">
-        {/* <button
-          onClick={() => router.push('/robots/darkmode')}
-          className="flex items-center space-x-2 px-4 py-2 bg-white text-white border border-slate-600 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all"
-        >
-          <span className="text-xl">🌚</span>
-        </button> */}
+         <Link href="/planner" className="flex items-center space-x-2 px-4 py-2 font-bold bg-white text-blue-700 border border-slate-600 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all">
+           <span className="text-xl">Planner</span>
+         </Link>
       </div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
