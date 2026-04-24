@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Clock, Calendar, Settings, Trash2, Check, Edit2 } from 'lucide-react';
+import { Plus, Clock, Calendar, Settings, Trash2, Check, Edit2, Activity } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
 import Link from 'next/link';
 
@@ -194,9 +194,13 @@ const RobotScheduler = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="fixed top-4 left-4 z-50">
+      <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
          <Link href="/planner" className="flex items-center space-x-2 px-4 py-2 font-bold bg-white text-blue-700 border border-slate-600 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all">
            <span className="text-xl">Planner</span>
+         </Link>
+         <Link href="/timeline" className="flex items-center gap-2 px-4 py-2 font-bold bg-gray-900 text-blue-400 border border-gray-700 rounded-xl hover:border-blue-400 hover:text-blue-300 transition-all">
+           <Activity size={18} />
+           <span className="text-xl">Timeline</span>
          </Link>
       </div>
       <div className="max-w-7xl mx-auto">
