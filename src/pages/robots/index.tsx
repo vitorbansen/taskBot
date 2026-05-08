@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Clock, Calendar, Settings, Trash2, Check, Edit2, Activity } from 'lucide-react';
+import { Plus, Clock, Calendar, Settings, Trash2, Edit2, Activity } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
 import Link from 'next/link';
 
@@ -12,7 +12,6 @@ interface Robot {
   startTime: string;
   endTime: string;
   color: string;
-  manual: boolean;
   day: number;
   isDaily?: boolean;
   description?: string;
@@ -29,7 +28,6 @@ const RobotScheduler = () => {
     startTime: '',
     endTime: '',
     color: '#3B82F6',
-    manual: false,
     isDaily: false,
     description: ''
   });
@@ -107,7 +105,6 @@ const RobotScheduler = () => {
           startTime: '',
           endTime: '',
           color: '#3B82F6',
-          manual: false,
           isDaily: false,
           description: ''
         });
@@ -125,25 +122,6 @@ const RobotScheduler = () => {
       setRobots(prev => prev.filter(r => r.id !== id));
     } catch (error) {
       console.error('Erro ao remover robô:', error);
-    }
-  };
-
-  // Alternar status manual
-  const toggleManual = async (id: number) => {
-    try {
-      const robot = robots.find(r => r.id === id);
-      if (robot) {
-        await axios.put('/api/robots', { id, manual: !robot.manual });
-        setRobots(robots.map(r => 
-          r.id === id ? { ...r, manual: !r.manual } : r
-        ));
-      }
-    } catch (error) {
-      console.error('Erro ao alterar status manual:', error);
-      // Fallback para atualização local
-      setRobots(robots.map(r => 
-        r.id === id ? { ...r, manual: !r.manual } : r
-      ));
     }
   };
 
@@ -195,9 +173,6 @@ const RobotScheduler = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
-         <Link href="/planner" className="flex items-center space-x-2 px-4 py-2 font-bold bg-white text-blue-700 border border-slate-600 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all">
-           <span className="text-xl">Planner</span>
-         </Link>
          <Link href="/timeline" className="flex items-center gap-2 px-4 py-2 font-bold bg-gray-900 text-blue-400 border border-gray-700 rounded-xl hover:border-blue-400 hover:text-blue-300 transition-all">
            <Activity size={18} />
            <span className="text-xl">Timeline</span>
@@ -364,9 +339,6 @@ const RobotScheduler = () => {
                                       <span className="font-medium text-sm truncate">
                                         {robot.name}
                                       </span>
-                                      {robot.manual && (
-                                        <Check className="w-4 h-4 ml-1 text-green-600 flex-shrink-0" />
-                                      )}
                                       {/* Botão para editar descrição */}
                                       <button
                                         onClick={() => openDescriptionModal(robot)}
@@ -391,19 +363,6 @@ const RobotScheduler = () => {
                                   </div>
                                   
                                   <div className="flex flex-col space-y-1 ml-2">
-                                    <button
-                                      onClick={() => toggleManual(robot.id)}
-                                      className={
-                                        `px-2 py-1 rounded text-xs font-medium transition-colors
-                                        ${robot.manual 
-                                          ? 'bg-green-500 text-white' 
-                                          : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                                        }`
-                                      }
-                                    >
-                                      {robot.manual ? 'M' : 'A'}
-                                    </button>
-                                    
                                     <button
                                       onClick={() => removeRobot(robot.id)}
                                       className="text-red-600 hover:text-red-800 p-1"
@@ -433,8 +392,8 @@ const RobotScheduler = () => {
 
               {/* Legenda */}
               <div className="mt-4 text-sm text-gray-600">
-                <p><strong>Dica:</strong> Os robôs aparecem como blocos coloridos na timeline. 
-                Use o scroll para navegar pelos horários. M = Manual, A = Automático.</p>
+                <p><strong>Dica:</strong> Os robôs aparecem como blocos coloridos na timeline.
+                Use o scroll para navegar pelos horários.</p>
               </div>
             </div>
 
@@ -468,16 +427,6 @@ const RobotScheduler = () => {
                           )}
                         </div>
                         <div className="flex flex-col space-y-1 ml-4">
-                          <button
-                            onClick={() => toggleManual(robot.id)}
-                            className={`px-3 py-1 rounded text-xs font-semibold transition-colors
-                              ${robot.manual
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                              }`}
-                          >
-                            {robot.manual ? 'M' : 'A'}
-                          </button>
                           <button
                             onClick={() => openDescriptionModal(robot)}
                             className="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-xs font-semibold"
@@ -546,16 +495,6 @@ const RobotScheduler = () => {
                 />
               ))}
             </div>
-
-            <label className="flex items-center mb-3">
-              <input
-                type="checkbox"
-                checked={newRobot.manual}
-                onChange={e => setNewRobot({ ...newRobot, manual: e.target.checked })}
-                className="mr-2"
-              />
-              Manual (M)
-            </label>
 
             <label className="flex items-center mb-3">
               <input

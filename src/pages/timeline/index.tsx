@@ -12,7 +12,6 @@ interface Robot {
   startTime: string
   endTime: string
   color: string
-  manual: boolean
   day: number
   description?: string
 }
@@ -199,7 +198,7 @@ function RobotCard({ item, dayWidth, onEnter, onLeave }: RobotCardProps) {
         left: cardLeft,
         width: cardWidth,
         backgroundColor: cfg.bgColor,
-        borderLeft: `3px solid ${cfg.borderColor}`,
+        borderLeft: `3px solid ${robot.color}`,
         zIndex: 10 + col,
         boxShadow: status === 'running'
           ? `0 0 12px rgba(34,197,94,0.25), inset 0 0 0 1px ${cfg.borderColor}22`
@@ -236,11 +235,6 @@ function RobotCard({ item, dayWidth, onEnter, onLeave }: RobotCardProps) {
             <span className="text-[10px] leading-none" style={{ color: cfg.dotColor }}>
               {cfg.label}
             </span>
-            {robot.manual && (
-              <span className="ml-auto text-[9px] px-1 py-0.5 rounded bg-yellow-900/40 text-yellow-400 leading-none">
-                M
-              </span>
-            )}
           </div>
         )}
 
@@ -304,11 +298,6 @@ function Tooltip({ data }: { data: TooltipData }) {
           <Row label="Início" value={robot.startTime} />
           <Row label="Fim" value={robot.endTime} />
           <Row label="Duração" value={formatDuration(robot.startTime, robot.endTime)} />
-          <Row
-            label="Modo"
-            value={robot.manual ? 'Manual' : 'Automático'}
-            valueClass={robot.manual ? 'text-yellow-400' : 'text-green-400'}
-          />
         </div>
 
         {/* Description */}

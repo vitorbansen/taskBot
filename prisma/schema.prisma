@@ -13,7 +13,6 @@ model Robot {
   startTime String
   endTime   String
   color     String
-  manual    Boolean
   day       Int
   description String?
 }
